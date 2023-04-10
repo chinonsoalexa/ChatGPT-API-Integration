@@ -4,14 +4,19 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
+	"log"
 	"fmt"
 	"image/png"
 	"os"
-
+	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	apiKey := os.Getenv("API_KEY")
 	c := openai.NewClient(apiKey)
 	ctx := context.Background()
