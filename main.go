@@ -5,9 +5,10 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	openai "github.com/sashabaranov/go-openai"
 	"image/png"
 	"os"
+
+	openai "github.com/sashabaranov/go-openai"
 )
 
 func main() {
