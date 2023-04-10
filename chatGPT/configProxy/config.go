@@ -1,4 +1,4 @@
-package main
+package configProxy
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-func main() {
+func GPTConfig() {
 	// Initialize the OpenAI client
 	config := openai.DefaultConfig("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")
 	client := openai.NewClientWithConfig(config)
