@@ -10,7 +10,7 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func Voice() {
+func SpeechToText(speechfilepath string) string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -21,12 +21,11 @@ func Voice() {
 
 	req := openai.AudioRequest{
 		Model:    openai.Whisper1,
-		FilePath: "/Users/Nonso/downloads/Davido-Timeless-(ThinkNews/Davido-Feel_(thinkNews.com.ng).mp3",
+		FilePath: speechfilepath,
 	}
 	resp, err := c.CreateTranscription(ctx, req)
 	if err != nil {
 		fmt.Printf("Transcription error: %v\n", err)
-		return
 	}
-	fmt.Println(resp.Text)
+	return resp.Text
 }
