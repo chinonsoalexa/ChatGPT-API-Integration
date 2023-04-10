@@ -4,14 +4,21 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/gin-gonic/gin"
 	"github.com/sashabaranov/go-openai"
 )
 
 func GPTConfig() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
 	// Initialize the OpenAI client
-	config := openai.DefaultConfig("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")
+	config := openai.DefaultConfig(apiKey)
 	client := openai.NewClientWithConfig(config)
 
 	// Initialize the Gin router

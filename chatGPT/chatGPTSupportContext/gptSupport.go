@@ -6,12 +6,19 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"log"
 
+	"github.com/joho/godotenv"
 	"github.com/sashabaranov/go-openai"
 )
 
 func GPTSupportContext() {
-	client := openai.NewClient("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")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
+	client := openai.NewClient(apiKey)
 	messages := make([]openai.ChatCompletionMessage, 0)
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Conversation")

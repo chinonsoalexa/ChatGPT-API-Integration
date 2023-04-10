@@ -3,11 +3,20 @@ package chatGPT3Completation
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
 )
 
 func GPT3Completion() {
-	c := openai.NewClient("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")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
+	c := openai.NewClient(apiKey)
 	ctx := context.Background()
 
 	req := openai.CompletionRequest{

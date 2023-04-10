@@ -5,13 +5,21 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"log"
+
+	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
 	"image/png"
 	"os"
 )
 
 func ImageRequest() {
-	c := openai.NewClient("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")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
+	c := openai.NewClient(apiKey)
 	ctx := context.Background()
 
 	// Sample image by link
