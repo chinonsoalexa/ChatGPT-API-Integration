@@ -1,79 +1,59 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"encoding/base64"
-	"log"
-	"fmt"
-	"image/png"
-	"os"
-	"github.com/joho/godotenv"
-	openai "github.com/sashabaranov/go-openai"
+	"crypto/tls"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/quic-go/quic-go/http3"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-	apiKey := os.Getenv("API_KEY")
-	c := openai.NewClient(apiKey)
-	ctx := context.Background()
 
-	// Sample image by link
-	reqUrl := openai.ImageRequest{
-		Prompt:         "Parrot on a skateboard performs a trick, cartoon style, natural light, high detail",
-		Size:           openai.CreateImageSize256x256,
-		ResponseFormat: openai.CreateImageResponseFormatURL,
-		N:              1,
-	}
 
-	respUrl, err := c.CreateImage(ctx, reqUrl)
-	if err != nil {
-		fmt.Printf("Image creation error: %v\n", err)
-		return
-	}
-	fmt.Println(respUrl.Data[0].URL)
+}
 
-	// Example image as base64
-	reqBase64 := openai.ImageRequest{
-		Prompt:         "Portrait of a humanoid parrot in a classic costume, high detail, realistic light, unreal engine",
-		Size:           openai.CreateImageSize256x256,
-		ResponseFormat: openai.CreateImageResponseFormatB64JSON,
-		N:              1,
-	}
+func init() {
+		/**
+	*? Set Gin-Gonic to run in release mode
+	 */
+	 gin.SetMode(gin.ReleaseMode)
 
-	respBase64, err := c.CreateImage(ctx, reqBase64)
-	if err != nil {
-		fmt.Printf("Image creation error: %v\n", err)
-		return
-	}
-
-	imgBytes, err := base64.StdEncoding.DecodeString(respBase64.Data[0].B64JSON)
-	if err != nil {
-		fmt.Printf("Base64 decode error: %v\n", err)
-		return
-	}
-
-	r := bytes.NewReader(imgBytes)
-	imgData, err := png.Decode(r)
-	if err != nil {
-		fmt.Printf("PNG decode error: %v\n", err)
-		return
-	}
-
-	file, err := os.Create("example.png")
-	if err != nil {
-		fmt.Printf("File creation error: %v\n", err)
-		return
-	}
-	defer file.Close()
-
-	if err := png.Encode(file, imgData); err != nil {
-		fmt.Printf("PNG encode error: %v\n", err)
-		return
-	}
-
-	fmt.Println("The image was saved as example.png")
+	 /**
+	 *? Initializing new route to router
+	  */
+	 router := gin.Default()
+ 
+	 /**
+	 *? Handle GET requests to "/"
+	  */
+	//  router.GET("/Test/:id", routes.User)
+ 
+	 /**
+	 *? Configure server
+	  */
+	 server := &http.Server{
+		 Addr:    ":8080",
+		 Handler: router,
+		 TLSConfig: &tls.Config{
+			 NextProtos:         []string{http3.NextProtoH3},
+			 InsecureSkipVerify: true,
+		 },
+	 }
+ 
+	 /**
+	 *! Start server
+	  */
+	 http3.ListenAndServeQUIC(":8080", "cert.pem", "key.pem", server.Handler)
+ 
+	 /**
+	 * TODO: Server starting at [::1]:3000/login
+	  */
+ 
+	 /**
+	 *! Wait for server to gracefully shut down
+	  */
+	 if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		 panic(err)
+	 }
 }
