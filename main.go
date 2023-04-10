@@ -1,55 +1,73 @@
 package main
 
 import (
+	"bytes"
 	"context"
-	"log"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/sashabaranov/go-openai"
+	"encoding/base64"
+	"fmt"
+	openai "github.com/sashabaranov/go-openai"
+	"image/png"
+	"os"
 )
 
 func main() {
-	// Initialize the OpenAI client
-	config := openai.DefaultConfig("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")
-	client := openai.NewClientWithConfig(config)
+	apiKey := os.Getenv("API_KEY")
+	c := openai.NewClient(apiKey)
+	ctx := context.Background()
 
-	// Initialize the Gin router
-	router := gin.Default()
-
-	// Define a route to handle completion requests
-	router.POST("/complete", func(c *gin.Context) {
-		// Parse the request JSON body
-		var req struct {
-			Prompt    string `json:"prompt"`
-			// MaxLength int    `json:"max_length"`
-			Model     string `json:"model"`
-		}
-		if err := c.BindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Set up the completion request
-		completionReq := &openai.CompletionRequest{
-			Prompt:    req.Prompt,
-			// MaxLength: req.MaxLength,
-			Model:     req.Model,
-		}
-
-		// Send the completion request
-		res, err := client.CreateCompletion(context.Background(), *completionReq)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-
-		// Return the response
-		c.JSON(http.StatusOK, gin.H{"text": res.Choices[0].Text})
-	})
-
-	// Start the server
-	if err := router.Run(":8080"); err != nil {
-		log.Fatal(err)
+	// Sample image by link
+	reqUrl := openai.ImageRequest{
+		Prompt:         "Parrot on a skateboard performs a trick, cartoon style, natural light, high detail",
+		Size:           openai.CreateImageSize256x256,
+		ResponseFormat: openai.CreateImageResponseFormatURL,
+		N:              1,
 	}
+
+	respUrl, err := c.CreateImage(ctx, reqUrl)
+	if err != nil {
+		fmt.Printf("Image creation error: %v\n", err)
+		return
+	}
+	fmt.Println(respUrl.Data[0].URL)
+
+	// Example image as base64
+	reqBase64 := openai.ImageRequest{
+		Prompt:         "Portrait of a humanoid parrot in a classic costume, high detail, realistic light, unreal engine",
+		Size:           openai.CreateImageSize256x256,
+		ResponseFormat: openai.CreateImageResponseFormatB64JSON,
+		N:              1,
+	}
+
+	respBase64, err := c.CreateImage(ctx, reqBase64)
+	if err != nil {
+		fmt.Printf("Image creation error: %v\n", err)
+		return
+	}
+
+	imgBytes, err := base64.StdEncoding.DecodeString(respBase64.Data[0].B64JSON)
+	if err != nil {
+		fmt.Printf("Base64 decode error: %v\n", err)
+		return
+	}
+
+	r := bytes.NewReader(imgBytes)
+	imgData, err := png.Decode(r)
+	if err != nil {
+		fmt.Printf("PNG decode error: %v\n", err)
+		return
+	}
+
+	file, err := os.Create("example.png")
+	if err != nil {
+		fmt.Printf("File creation error: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	if err := png.Encode(file, imgData); err != nil {
+		fmt.Printf("PNG encode error: %v\n", err)
+		return
+	}
+
+	fmt.Println("The image was saved as example.png")
 }
