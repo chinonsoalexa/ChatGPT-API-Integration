@@ -2,15 +2,15 @@
 
 This API allows you to integrate the ChatGPT language model into your application's backend. With this API, you can send text inputs to the model and receive responses in real-time.
 
-<h3 style="font-family: Arial, sans-serif;">Installation</h3>
+<h2 style="font-family: Arial, sans-serif;">Installation</h2>
 
 To use this API, you will need to have Golang go1.20.2  or higher installed on your machine. You can download Golang from the official website: https://golang.org/
 
-<h4 style="font-family: Arial, sans-serif;">Clone this repository to your local machine.</h4>
+<h3 style="font-family: Arial, sans-serif;">Clone this repository to your local machine.</h3>
 Install the required packages by running go get requirements.txt in your terminal.
 Start the server by running go run main.go in your terminal.
 
-<h4 style="font-family: Arial, sans-serif;">Usage</h4>
+<h3 style="font-family: Arial, sans-serif;">Usage</h3>
 
 Endpoints
 The API has the following endpoints:
@@ -41,10 +41,10 @@ Copy code
     "response": "I'm doing well, thank you for asking. How about you?"
 }
 
-<h4 style="font-family: Arial, sans-serif;">Contributing</h4>
+<h3 style="font-family: Arial, sans-serif;">Contributing</h3>
 
 Contributions are welcome! Please open an issue first to discuss what you would like to change.
 
-<h4 style="font-family: Arial, sans-serif;">License</h4>
+<h3 style="font-family: Arial, sans-serif;">License</h3>
 
 This project is licensed under the MIT License - see the LICENSE file for details.
