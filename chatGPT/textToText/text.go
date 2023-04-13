@@ -1,14 +1,22 @@
 package textToText
 
 import (
+	"log"
+	"os"
 	"context"
 	"fmt"
 
+	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func ToText() {
-	client := openai.NewClient("your token")
+func ToText(inputText string) string {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	apiKey := os.Getenv("API_KEY")
+	client := openai.NewClient(apiKey)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
@@ -16,7 +24,7 @@ func ToText() {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleUser,
-					Content: "Hello!",
+					Content: inputText,
 				},
 			},
 		},
@@ -24,8 +32,8 @@ func ToText() {
 
 	if err != nil {
 		fmt.Printf("ChatCompletion error: %v\n", err)
-		return
+		return "an error occured in textToText package and ToText function"
 	}
 
-	fmt.Println(resp.Choices[0].Message.Content)
+	return resp.Choices[0].Message.Content
 }

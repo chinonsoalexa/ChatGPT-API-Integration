@@ -10,7 +10,7 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func GPT3Completion() {
+func GPT3Completion(prompt string) string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -21,13 +21,13 @@ func GPT3Completion() {
 
 	req := openai.CompletionRequest{
 		Model:     openai.GPT3Ada,
-		MaxTokens: 5,
-		Prompt:    "Lorem ipsum",
+		MaxTokens: 10,
+		Prompt:    prompt,
 	}
 	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
 		fmt.Printf("Completion error: %v\n", err)
-		return
+		return "an error occured in chatGPT3Completation package and GPT3Completion function"
 	}
-	fmt.Println(resp.Choices[0].Text)
+	return resp.Choices[0].Text
 }

@@ -12,7 +12,7 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func GTP3StreamingCompletion() {
+func GTP3StreamingCompletion(prompt2 string) openai.CompletionResponse {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -24,29 +24,28 @@ func GTP3StreamingCompletion() {
 	req := openai.CompletionRequest{
 		Model:     openai.GPT3Ada,
 		MaxTokens: 5,
-		Prompt:    "Lorem ipsum",
+		Prompt:    prompt2,
 		Stream:    true,
 	}
 	stream, err := c.CreateCompletionStream(ctx, req)
 	if err != nil {
 		fmt.Printf("CompletionStream error: %v\n", err)
-		return
+		// return "an error occured in chatGTP3StreamingCompletion package and GTP3StreamingCompletion function"
 	}
 	defer stream.Close()
 
-	for {
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
 			fmt.Println("Stream finished")
-			return
+			// return	
 		}
 
 		if err != nil {
 			fmt.Printf("Stream error: %v\n", err)
-			return
+			// return 
 		}
 
 
 		fmt.Printf("Stream response: %v\n", response)
-	}
+		return response 
 }

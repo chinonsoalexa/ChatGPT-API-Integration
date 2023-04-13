@@ -12,7 +12,7 @@ import (
 	openai "github.com/sashabaranov/go-openai"
 )
 
-func GPTstreaming() {
+func GPTstreaming(Prompt3 string) string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -25,9 +25,10 @@ func GPTstreaming() {
 		Model:     openai.GPT3Dot5Turbo,
 		MaxTokens: 20,
 		Messages: []openai.ChatCompletionMessage{
+			
 			{
 				Role:    openai.ChatMessageRoleUser,
-				Content: "Lorem ipsum",
+				Content: Prompt3,
 			},
 		},
 		Stream: true,
@@ -35,23 +36,22 @@ func GPTstreaming() {
 	stream, err := c.CreateChatCompletionStream(ctx, req)
 	if err != nil {
 		fmt.Printf("ChatCompletionStream error: %v\n", err)
-		return
+		return "an error occured in chatGPTStreamingCompletion package and GPTstreaming function"
 	}
 	defer stream.Close()
 
 	fmt.Printf("Stream response: ")
-	for {
+
 		response, err := stream.Recv()
 		if errors.Is(err, io.EOF) {
 			fmt.Println("\nStream finished")
-			return
+			return "an error occured in chatGPTStreamingCompletion package and GPTstreaming function"
 		}
 
 		if err != nil {
 			fmt.Printf("\nStream error: %v\n", err)
-			return
+			return "an error occured in chatGPTStreamingCompletion package and GPTstreaming function"
 		}
 
-		fmt.Printf(response.Choices[0].Delta.Content)
-	}
+		return response.Choices[0].Delta.Content
 }
