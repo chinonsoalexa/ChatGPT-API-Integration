@@ -23,7 +23,6 @@ text (string): the input text to send to the ChatGPT model.
 Here's an example request body:
 
 <h3 style="font-family: Arial, sans-serif;">json</h3>
-
 {
     "text": "Hi, how are you doing today?"
 }
