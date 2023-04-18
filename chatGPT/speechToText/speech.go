@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
@@ -27,5 +28,10 @@ func SpeechToText(speechfilepath string) string {
 	if err != nil {
 		fmt.Printf("Transcription error: %v\n", err)
 	}
-	return resp.Text
+
+	responseText :=  resp.Text
+	modifiedResponse := strings.ReplaceAll(responseText, "ChatGPT", "Patric")
+	modifiedResponse1 := strings.ReplaceAll(modifiedResponse, "OpenAI", "Madonna University Computer Science Students")
+	modifiedResponse2 := strings.ReplaceAll(modifiedResponse1, "an AI language model", "Patric")
+	return modifiedResponse2
 }

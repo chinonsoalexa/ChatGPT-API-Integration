@@ -1,5 +1,5 @@
 package controllers
-
+//  still under construct
 import (
 	"net/http"
 
@@ -25,5 +25,5 @@ func GTP3StreamingCompletionContr(ctx *gin.Context) {
 	result := GPT3s.GTP3StreamingCompletion(prompt.Text)
 
   // Send a response with the completion result
-  ctx.JSON(http.StatusOK, gin.H{"message": "Success", "result": result})
+  ctx.JSON(http.StatusOK, gin.H{"message": "Success", "result": result.Choices[0].Text})
 }

@@ -5,6 +5,7 @@ import (
 	"os"
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/joho/godotenv"
 	openai "github.com/sashabaranov/go-openai"
@@ -35,5 +36,10 @@ func ToText(inputText string) string {
 		return "an error occured in textToText package and ToText function"
 	}
 
-	return resp.Choices[0].Message.Content
+	responseText :=  resp.Choices[0].Message.Content
+	modifiedResponse := strings.ReplaceAll(responseText, "ChatGPT", "Patric")
+	modifiedResponse1 := strings.ReplaceAll(modifiedResponse, "OpenAI", "Madonna University Computer Science Students")
+	modifiedResponse2 := strings.ReplaceAll(modifiedResponse1, "an AI language model", "Patric")
+
+	return modifiedResponse2
 }

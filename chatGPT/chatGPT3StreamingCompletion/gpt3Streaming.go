@@ -1,4 +1,5 @@
 package chatGTP3StreamingCompletion
+//  still under construct
 
 import (
 	"errors"
@@ -22,8 +23,8 @@ func GTP3StreamingCompletion(prompt2 string) openai.CompletionResponse {
 	ctx := context.Background()
 
 	req := openai.CompletionRequest{
-		Model:     openai.GPT3Ada,
-		MaxTokens: 5,
+		Model:     openai.GPT4,
+		MaxTokens: 100,
 		Prompt:    prompt2,
 		Stream:    true,
 	}
