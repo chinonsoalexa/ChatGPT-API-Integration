@@ -7,16 +7,13 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:site_name" content="View Varshith's Portfolio Website">
-    <meta property="og:title" content="Developer | Varshith" />
-    <meta property="og:description"
-        content="Hello there 👋🏻,My name is Varshith Hegde.I am a Computer Engineering student at Maangalore Institute of Technology And Engineering 👨🏻‍💻📚I am eager to hear about potential career opportunities, so I would be pleased to chat about job openings in the engineering sphere.Send 'help' to know more about me." />
-    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="View Patric's Portfolio Website">
+    <meta property="og:title" content="Developer | Patric" />
 
     <meta property="og:type" content="website" />
     <meta property="og:image:type" content="image/jpeg">
 
-    <link rel="icon" type="image/png" href="images/favicon.ico" />
+    <link rel="icon" type="image/png" href="images/chatGPT.jpg" />
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="300">
     <meta property="og:updated_time" content="1440432930" />
@@ -26,8 +23,6 @@
 
 <body onload="startFunction()">
 
-  
-
     <nav>
 
         <div class="navbar">
@@ -36,6 +31,7 @@
                 <label id="name">ChatGPT 4</label>
                 <label id="lastseen">Offline</label>
             </div>
+            <label id="chatSummery">New Chat</label>
         </div>
 
     </nav>
@@ -66,10 +62,12 @@
     <footer>
         <div class="sendBar">
             <input id="inputMSG" onkeypress="isEnter(event)" type="text" placeholder="Type a message" autofocus>
-            <svg onclick="sendMsg()" viewBox="0 0 24 24" width="24" height="24" class="">
+            <svg onclick="sendMsg()" id="clickedd" viewBox="0 0 24 24" width="24" height="24" class="">
                 <path fill="currentColor"
                     d="M1.101 21.757 23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"></path>
             </svg>
+            <img src="images/mic.jpg" class="microphone" onclick="toggleRecording()" alt="mic">
+            <img src="images/voiceUrl.jpg" class="voiceurl" alt="mic">
         </div>
     </footer>
 

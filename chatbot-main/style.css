@@ -34,7 +34,7 @@ nav{
     margin-left: 10px;
 }
 
-.navbar .personalInfo{
+.navbar .personalInfo {
     line-height: 100%;
     display: flex;
     flex-direction: column;
@@ -317,7 +317,9 @@ footer{
     margin: auto;
 }
 .sendBar svg{
-    margin: auto;
+    margin-top: 13px;
+    margin-left: 10px;
+    /* margin: auto; */
     height: 40%;
     min-height: 40%;
 
@@ -397,9 +399,30 @@ footer{
     .scrollable .closeBTN{
         margin-top: 15px;
     }
-
+    
     #call:hover .number{
         display: block;
         height: auto;
     }
+}
+
+.microphone {
+    float: left;
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .voiceurl {
+    float: left;
+    margin-top: 13px;
+    margin-left: 10px;
+    width: 30px;
+    height: 30px;
+  }
+
+  #chatSummery {
+    color: #e9edef;
+    margin-top: 13px;
+    margin-left: 50px;
 }

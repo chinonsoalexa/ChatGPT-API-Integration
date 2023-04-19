@@ -40,6 +40,37 @@ function isEnter(event) {
     }
 }
 
+
+var retryCount = 0;
+var maxRetries = 3;
+var responseSum;
+console.log(responseSum)
+
+function sendData(input) {
+
+var xhr = new XMLHttpRequest();
+
+
+xhr.open("POST", "http://localhost:8080/gpt_to_text", true);
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.onreadystatechange = function() {
+  if (this.readyState == 4) {
+    if (this.status == 200) {
+     var response = JSON.parse(this.responseText);
+     responseSum = response.result
+      sendTextMessage(response.result);
+    } else if (retryCount < maxRetries) {
+      retryCount++;
+      setTimeout(sendData(), 1000);
+    } else {
+        sendTextMessage("Sorry, the server is not available at the moment. Please make sure that your back-end server is up and running.");
+    }
+  }
+};
+var data = JSON.stringify({text: input});
+xhr.send(data);
+}
+
 function sendMsg() {
     var input = document.getElementById("inputMSG");
     var ti = input.value;
@@ -67,6 +98,7 @@ function sendMsg() {
     var lastSeen = document.getElementById("lastseen");
     lastSeen.innerText = "typing...";
     setTimeout(function () { sendData(ti) }, 1500);
+    summaryText(ti);
 }
 
 function introText() {
@@ -132,29 +164,103 @@ function playSound() {
     audio.play();
 }
 
+let buttonClicked = false;
 
-function sendData(input) {
+function summaryText(input) {
 
-    // Create a new XMLHttpRequest object
+  if (!buttonClicked) {
+    var summeryData = document.getElementById("chatSummery");
+    var s = "write a summary of the below text as a question not more than 6 words: /n" + input; 
     var xhr = new XMLHttpRequest();
 
-    // Set the HTTP method to POST and the URL of the server endpoint
     xhr.open("POST", "http://localhost:8080/gpt_to_text", true);
-
-    // Set the request header to indicate that the data is in JSON format
     xhr.setRequestHeader("Content-Type", "application/json");
-
-    // Define the callback function to handle the response
-    xhr.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200) {
-        var response = JSON.parse(this.responseText);
-        return sendTextMessage(response.result);
-      }
-    };
-
-    // Convert the input data to a JSON string and send it in the request body
-    var data = JSON.stringify({text: input});
+    var data = JSON.stringify({text: s});
     xhr.send(data);
-  }
+
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        var response = JSON.parse(xhr.responseText);
+        if(response.result != "Back-End server not connected to the internet. Please make sure that you're connected to the internet."){
+        summeryData.innerText = response.result;
+        }
+        buttonClicked = true;
+      } else {
+        console.log("Request failed. Returned status of " + xhr.status);
+      }
+    }
+  } 
+}
+const myButton = document.getElementById("clickedd");
+
+myButton.addEventListener("click", summaryText());
+
   
-  
+let stream = null;
+let mediaRecorder = null;
+let chunks = [];
+
+function startRecording() {
+  // Get access to the user's microphone or camera
+  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+    .then((stream) => {
+      // Store the stream for later use
+      stream = stream;
+
+      // Create a new MediaRecorder instance
+      mediaRecorder = new MediaRecorder(stream);
+
+      // Add event listeners to the MediaRecorder instance
+      mediaRecorder.addEventListener('dataavailable', (event) => {
+        chunks.push(event.data);
+      });
+
+      mediaRecorder.addEventListener('stop', () => {
+        // Combine all the recorded chunks into a single Blob object
+        let blob = new Blob(chunks, { type: mediaRecorder.mimeType });
+
+        // Create a new URL object from the Blob object
+        let url = URL.createObjectURL(blob);
+
+        // Automatically download the recorded media when the user clicks on a link
+        let downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = 'audio.webm';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+
+        // Clean up resources
+        URL.revokeObjectURL(url);
+        chunks = [];
+        mediaRecorder = null;
+        stream.getTracks().forEach(track => track.stop());
+      });
+
+      // Start recording
+      mediaRecorder.start();
+
+      // Update the button image
+      recordButtonImg.src = 'stop.png';
+    })
+    .catch((error) => {
+      console.error('Error accessing media devices:', error);
+    });
+}
+
+function stopRecording() {
+  // Stop recording
+  mediaRecorder.stop();
+
+  // Update the button image
+  recordButtonImg.src = 'record.png';
+}
+
+// const recordButtonImg = document.getElementById('recordButtonImg');
+
+function toggleRecording() {
+    if (mediaRecorder === null) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }  
