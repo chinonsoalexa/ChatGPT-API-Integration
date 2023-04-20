@@ -2,6 +2,11 @@ var audio = new Audio('assets/sentmessage.mp3');
 var contactString = "<div class='social'> <a target='_blank' href='tel:+916363549133'> <div class='socialItem' id='call'><img class='socialItemI' src='images/phone.svg'/><label class='number'></label></label></div> </a> <a href='mailto:varshithvh@gmail.com'> <div class='socialItem'><img class='socialItemI' src='images/gmail.svg' alt=''></div> </a> <a target='_blank' href='https://github.com/Varshithvhegde'> <div class='socialItem'><img class='socialItemI' src='images/github.svg' alt=''></div> </a> <a target='_blank' href='https://wa.me/916363549133'> <div class='socialItem'><img class='socialItemI' src='images/whatsapp.svg' alt=''>";
 var resumeString = "<img src='images/resume_thumbnail.png' class='resumeThumbnail'><div class='downloadSpace'><div class='pdfname'><img src='images/pdf.png'><label>Varshith V Hegde Resume.pdf</label></div><a href='assets/varshith_v_hegde_resume.pdf' download='varshith_v_hegde_resume.pdf'><img class='download' src='images/downloadIcon.svg'></a></div>";
 var addressString = "<div class='mapview'><iframe src='https://www.google.com/maps/dir//Moodbidri+private+Bus+Stand,+Bus+Stand+Rd,+Mudbidri,+Karnataka+574227/@13.0639,74.9991985,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3ba4ab3d49331379:0x17be05cb5b69caa2!2m2!1d74.9957298!2d13.0680955?hl=en' class='map'></iframe></div><label class='add'><address>B2 'Asara'<br>Kodoli<br>Kolhapur, Maharashtra, INDIA 416114</address>";
+var isanewRecording = false;
+var mediaRecorder;
+var stream = null;
+var chunks = [];
+
 
 function startFunction() {
     setLastSeen();
@@ -44,7 +49,6 @@ function isEnter(event) {
 var retryCount = 0;
 var maxRetries = 3;
 var responseSum;
-console.log(responseSum)
 
 function sendData(input) {
 
@@ -196,16 +200,12 @@ const myButton = document.getElementById("clickedd");
 myButton.addEventListener("click", summaryText());
 
   
-let stream = null;
-let mediaRecorder = null;
-let chunks = [];
-
 function startRecording() {
   // Get access to the user's microphone or camera
-  navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-    .then((stream) => {
+  navigator.mediaDevices.getUserMedia({ audio: true, video: false})
+    .then((mediaStream) => {
       // Store the stream for later use
-      stream = stream;
+      stream = mediaStream;
 
       // Create a new MediaRecorder instance
       mediaRecorder = new MediaRecorder(stream);
@@ -239,8 +239,6 @@ function startRecording() {
       // Start recording
       mediaRecorder.start();
 
-      // Update the button image
-      recordButtonImg.src = 'stop.png';
     })
     .catch((error) => {
       console.error('Error accessing media devices:', error);
@@ -248,19 +246,19 @@ function startRecording() {
 }
 
 function stopRecording() {
-  // Stop recording
-  mediaRecorder.stop();
-
-  // Update the button image
-  recordButtonImg.src = 'record.png';
-}
-
-// const recordButtonImg = document.getElementById('recordButtonImg');
+    // Stop recording
+    mediaRecorder.stop();
+    console.log("recording ended")
+  }
+  
 
 function toggleRecording() {
-    if (mediaRecorder === null) {
+
+    if (!isanewRecording) {
       startRecording();
+      isanewRecording = true;
     } else {
       stopRecording();
+      isanewRecording = false;
     }
-  }  
+  }
