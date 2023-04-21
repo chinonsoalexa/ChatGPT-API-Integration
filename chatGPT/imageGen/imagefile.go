@@ -71,5 +71,5 @@ func ImageRequest(imageDef string) string {
 		fmt.Printf("PNG encode error: %v\n", err)
 	}
 
-	return "The image was saved as example.png"
+	return "Your request to create " + imageDef  + " was created successfully."
 }

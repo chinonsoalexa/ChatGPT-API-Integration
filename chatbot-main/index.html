@@ -67,14 +67,7 @@
                     d="M1.101 21.757 23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"></path>
             </svg>
             <img onclick="toggleRecording()" src="images/mic.jpg" class="microphone"  alt="mic">
-
-            <form id="myForm" action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" id="myFileInput" name="file" style="display: none;">
-            <img id="myImage" class="voiceurl" src="images/voiceUrl.jpg" onclick="document.getElementById('myFileInput').click();">
-            <br>
-            <input type="submit" value="Upload">
-          </form>
-          
+            <img id="myImage"onclick="sendImage()" class="voiceurl" src="images/voiceUrl.jpg">
         </div>
     </footer>
 

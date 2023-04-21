@@ -1,11 +1,10 @@
 var audio = new Audio('assets/sentmessage.mp3');
-var contactString = "<div class='social'> <a target='_blank' href='tel:+916363549133'> <div class='socialItem' id='call'><img class='socialItemI' src='images/phone.svg'/><label class='number'></label></label></div> </a> <a href='mailto:varshithvh@gmail.com'> <div class='socialItem'><img class='socialItemI' src='images/gmail.svg' alt=''></div> </a> <a target='_blank' href='https://github.com/Varshithvhegde'> <div class='socialItem'><img class='socialItemI' src='images/github.svg' alt=''></div> </a> <a target='_blank' href='https://wa.me/916363549133'> <div class='socialItem'><img class='socialItemI' src='images/whatsapp.svg' alt=''>";
-var resumeString = "<img src='images/resume_thumbnail.png' class='resumeThumbnail'><div class='downloadSpace'><div class='pdfname'><img src='images/pdf.png'><label>Varshith V Hegde Resume.pdf</label></div><a href='assets/varshith_v_hegde_resume.pdf' download='varshith_v_hegde_resume.pdf'><img class='download' src='images/downloadIcon.svg'></a></div>";
-var addressString = "<div class='mapview'><iframe src='https://www.google.com/maps/dir//Moodbidri+private+Bus+Stand,+Bus+Stand+Rd,+Mudbidri,+Karnataka+574227/@13.0639,74.9991985,15z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3ba4ab3d49331379:0x17be05cb5b69caa2!2m2!1d74.9957298!2d13.0680955?hl=en' class='map'></iframe></div><label class='add'><address>B2 'Asara'<br>Kodoli<br>Kolhapur, Maharashtra, INDIA 416114</address>";
 var isanewRecording = false;
 var mediaRecorder;
 var stream = null;
 var chunks = [];
+var retryCount = 0;
+var maxRetries = 3;
 
 
 function startFunction() {
@@ -46,11 +45,7 @@ function isEnter(event) {
 }
 
 
-var retryCount = 0;
-var maxRetries = 3;
-var responseSum;
-
-function sendData(input) {
+function api_To_Text(input) {
 
 var xhr = new XMLHttpRequest();
 
@@ -65,7 +60,7 @@ xhr.onreadystatechange = function() {
       sendTextMessage(response.result);
     } else if (retryCount < maxRetries) {
       retryCount++;
-      setTimeout(sendData(), 1000);
+      setTimeout(api_To_Text(), 1000);
     } else {
         sendTextMessage("Sorry, the server is not available at the moment. Please make sure that your back-end server is up and running.");
     }
@@ -73,6 +68,86 @@ xhr.onreadystatechange = function() {
 };
 var data = JSON.stringify({text: input});
 xhr.send(data);
+}
+
+function api_To_Image(input) {
+  return new Promise(function(resolve, reject) {
+    var xhr = new XMLHttpRequest();
+  
+    xhr.open("POST", "http://localhost:8080/gpt_image_gen", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+          var response = JSON.parse(this.responseText);
+          responseSum = response.result
+          resolve(response.result);
+        } else if (retryCount < maxRetries) {
+          retryCount++;
+          setTimeout(api_To_Text(), 1000);
+        } else {
+          reject("Sorry, the server is not available at the moment. Please make sure that your back-end server is up and running.");
+        }
+      }
+    };
+    var data = JSON.stringify({text: input});
+    xhr.send(data);
+  });
+}
+
+async function sendImage() {
+  var input = document.getElementById("inputMSG");
+  var ti = input.value;
+  var lastSeen = document.getElementById("lastseen");
+  lastSeen.innerText = "typing...";
+  try {
+    await api_To_Image(ti);
+    input.value = "";
+    var textToSend = "/Users/Nonso/Documents/MicroServices/Chat-GPT/example.png";
+    setTimeout(setLastSeen, 1000);
+    var date = new Date();
+    var myLI = document.createElement("li");
+    var myDiv = document.createElement("div");
+    var greendiv = document.createElement("div");
+    var dateLabel = document.createElement("label");
+    dateLabel.setAttribute("id", "sentlabel");
+    dateLabel.id = "sentlabel";
+    dateLabel.innerText = date.getHours() + ":" + date.getMinutes();
+    myDiv.setAttribute("class", "received");
+    greendiv.setAttribute("class", "grey");
+
+    // Create an image element and set its src attribute to the textToSend parameter
+    var imgElement = document.createElement('img');
+    imgElement.src = textToSend;
+
+    // Append the image element to the greendiv element
+    greendiv.appendChild(imgElement);
+
+    myDiv.appendChild(greendiv);
+    myLI.appendChild(myDiv);
+    greendiv.appendChild(dateLabel);
+    document.getElementById("listUL").appendChild(myLI);
+    var s = document.getElementById("chatting");
+    s.scrollTop = s.scrollHeight;
+    sendTextMessage("Your request to create " + "`" + ti  + "`" + " was created successfully.")
+    playSound();
+    // updateImageSrc();
+  } catch (error) {
+    sendTextMessage(error);
+  }
+}
+
+// function updateImageSrc() {
+//   var imgElement = document.querySelector('img[src="/Users/Nonso/Documents/MicroServices/Chat-GPT/example.png"]');
+//   if (imgElement) {
+//     var newSrc = "/Users/Nonso/Documents/MicroServices/Chat-GPT/new-example.png";
+//     imgElement.src = newSrc;
+//   }
+// }
+
+
+function api_To_Voice(input) {
+
 }
 
 function sendMsg() {
@@ -101,7 +176,7 @@ function sendMsg() {
     playSound();
     var lastSeen = document.getElementById("lastseen");
     lastSeen.innerText = "typing...";
-    setTimeout(function () { sendData(ti) }, 1500);
+    setTimeout(function () { api_To_Text(ti) }, 1500);
     summaryText(ti);
 }
 
@@ -110,15 +185,13 @@ function introText() {
     lastSeen.innerText = "typing...";
     var s = document.getElementById("chatting");
     s = "who are you and what can you do to render help to me?"
-    sendData(s)
+    api_To_Text(s)
 }
 
 function clearChat() {
     document.getElementById("listUL").innerHTML = "";
     waitAndResponce('intro');
 }
-
-
 
 function sendTextMessage(textToSend) {
     setTimeout(setLastSeen, 1000);
@@ -250,7 +323,6 @@ function stopRecording() {
     mediaRecorder.stop();
     console.log("recording ended")
   }
-  
 
 function toggleRecording() {
 

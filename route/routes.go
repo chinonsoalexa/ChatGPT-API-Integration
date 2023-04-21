@@ -37,6 +37,8 @@ func SetupRouter() *gin.Engine {
 func HandleOptions(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "POST")
+	c.Header("Access-Control-Allow-Methods", "DELETE")
+	c.Header("Access-Control-Allow-Methods", "GET")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 
 	// Respond with 200 OK
