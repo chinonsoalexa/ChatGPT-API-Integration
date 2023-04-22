@@ -18,7 +18,6 @@ function setLastSeen() {
     lastSeen.innerText = "last seen today at " + date.getHours() + ":" + date.getMinutes()
 }
 
-
 function closeFullDP() {
     var x = document.getElementById("fullScreenDP");
     if (x.style.display === 'flex') {
@@ -37,13 +36,11 @@ function openFullScreenDP() {
     }
 }
 
-
 function isEnter(event) {
     if (event.keyCode == 13) {
         sendMsg();
     }
 }
-
 
 function api_To_Text(input) {
 
@@ -145,10 +142,44 @@ async function sendImage() {
 //   }
 // }
 
-
 function api_To_Voice(input) {
-
+  return new Promise(function(resolve, reject) {
+    var xhr1 = new XMLHttpRequest();
+    var xhr2 = new XMLHttpRequest();
+    
+    // First request
+    xhr1.open("POST", "http://localhost:8080/gpt_speach_to_text", true);
+    xhr1.setRequestHeader("Content-Type", "application/json");
+    xhr1.onreadystatechange = function() {
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+          var response = JSON.parse(this.responseText);
+          var speechToTextResult = response.result;
+          // Second request
+          xhr2.open("POST", "http://localhost:8080/gpt_to_text", true);
+          xhr2.setRequestHeader("Content-Type", "application/json");
+          xhr2.onreadystatechange = function() {
+            if (this.readyState == 4) {
+              if (this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                var textResult = response.result;
+                sendTextMessage(textResult);
+                resolve(textResult);
+              } else {
+                reject(new Error("Error making second request"));
+              }
+            }
+          };
+          xhr2.send(JSON.stringify({ text: speechToTextResult }));
+        } else {
+          reject(new Error("Error making first request"));
+        }
+      }
+    };
+    xhr1.send(JSON.stringify({ text: input }));
+  });
 }
+
 
 function sendMsg() {
     var input = document.getElementById("inputMSG");
@@ -175,9 +206,9 @@ function sendMsg() {
     input.value = "";
     playSound();
     var lastSeen = document.getElementById("lastseen");
-    lastSeen.innerText = "typing...";
-    setTimeout(function () { api_To_Text(ti) }, 1500);
+    lastSeen.innerText = "typing...";    
     summaryText(ti);
+    setTimeout(function () { api_To_Text(ti) }, 1500);
 }
 
 function introText() {
@@ -206,28 +237,6 @@ function sendTextMessage(textToSend) {
     myDiv.setAttribute("class", "received");
     greendiv.setAttribute("class", "grey");
     greendiv.innerHTML = textToSend;
-    myDiv.appendChild(greendiv);
-    myLI.appendChild(myDiv);
-    greendiv.appendChild(dateLabel);
-    document.getElementById("listUL").appendChild(myLI);
-    var s = document.getElementById("chatting");
-    s.scrollTop = s.scrollHeight;
-    playSound();
-}
-
-
-function sendResponse() {
-    setTimeout(setLastSeen, 1000);
-    var date = new Date();
-    var myLI = document.createElement("li");
-    var myDiv = document.createElement("div");
-    var greendiv = document.createElement("div");
-    var dateLabel = document.createElement("label");
-    dateLabel.innerText = date.getHours() + ":" + date.getMinutes();
-    myDiv.setAttribute("class", "received");
-    greendiv.setAttribute("class", "grey");
-    dateLabel.setAttribute("class", "dateLabel");
-    greendiv.innerText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. ";
     myDiv.appendChild(greendiv);
     myLI.appendChild(myDiv);
     greendiv.appendChild(dateLabel);
@@ -321,7 +330,13 @@ function startRecording() {
 function stopRecording() {
     // Stop recording
     mediaRecorder.stop();
-    console.log("recording ended")
+    
+    api_To_Voice("Users/Nonso/Downloads/audio.webm").then(response => {
+      console.log(response); // logs the text response
+    }).catch(error => {
+      console.error(error); // logs any errors that occur
+    });
+    
   }
 
 function toggleRecording() {
