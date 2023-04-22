@@ -1,4 +1,4 @@
-<h1 style="font-family: Arial, sans-serif;"># ChatGPT Backend Integration API</h1>
+<h1 style="font-family: Arial, sans-serif;"># ChatGPT Backend Integration API (Front End Included) </h1>
 
 This API allows you to integrate the ChatGPT language model into your application's frontend. With this API, you can send text inputs to the model and receive responses in real-time.
 Sample image below...
