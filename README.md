@@ -2,6 +2,7 @@
 
 This API allows you to integrate the ChatGPT language model into your application's frontend. With this API, you can send text inputs to the model and receive responses in real-time.
 Sample image below...
+
 ![sample image](sample.jpg)
 
 <h2 style="font-family: Arial, sans-serif;">Installation</h2>
