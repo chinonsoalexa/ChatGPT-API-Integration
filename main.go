@@ -1,32 +1,15 @@
 package main
 
 import (
-    // "crypto/tls"
-    // "net/http"
-
-    "chat/route"
-
-    // "github.com/quic-go/quic-go/http3"
+	"chat/route"
+	// "github.com/gin-gonic/gin"
 )
 
 func main() {
-    // Set up the router
-    router := route.SetupRouter()
+	// gin.SetMode(gin.ReleaseMode)
+	// Set up the router
+	router := route.SetupRouter()
+	// local host path :8080
 	router.Run(":8080")
 
-    // // Configure the server
-    // server := &http.Server{
-    //     Addr: ":8080",
-    //     Handler: router,
-    //     TLSConfig: &tls.Config{
-    //         NextProtos:         []string{http3.NextProtoH3},
-    //         InsecureSkipVerify: true,
-    //     },
-    // }
-
-    // Start the server using HTTP/3 with QUIC
-    // err := http3.ListenAndServeQUIC(":8080", "server.crt", "server.key", server.Handler)
-    // if err != nil {
-    //     panic(err)
-    // }
 }
