@@ -32,13 +32,13 @@ func ImageRequest(imageDef string) string {
 	}
 
 	// Make a request to the OpenAI API to create the image
-	respUrl, err := client.CreateImage(ctx, reqUrl)
+	_, err := client.CreateImage(ctx, reqUrl)
 	if err != nil {
 		fmt.Printf("Image creation error: %v\n", err)
 	}
 
 	// Print the URL of the created image
-	fmt.Println(respUrl.Data[0].URL)
+	// fmt.Println(respUrl.Data[0].URL)
 
 	// Create an example image as base64 using OpenAI's GPT-3 API
 	reqBase64 := openai.ImageRequest{
