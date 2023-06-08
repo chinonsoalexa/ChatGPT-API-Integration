@@ -15,7 +15,7 @@ import (
 // It creates an image using OpenAI's GPT-3 API, saves the image to a file,
 // and returns a success message.
 func ImageRequest(imageDef string) string {
-	API_KEY := "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"
+	API_KEY := "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"
 
 	// Create a new client for the OpenAI API using the API key
 	client := openai.NewClient(API_KEY)

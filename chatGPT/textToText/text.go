@@ -23,7 +23,7 @@ var chatHistory []openai.ChatCompletionMessage
 func ToText(inputText string) string {
 	// You can find your API key at https://platform.openai.com/account/api-keys
 
-	API_KEY := "sk-cfBnkWj50YsQuhXRorNPT3BlbkFJ0yxlURnOvc5If1egJgq"
+	API_KEY := "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"
 	client := openai.NewClient(API_KEY)
 	// saving previous chat to recent chat to remember the chat
 	chatHistory = append(chatHistory, openai.ChatCompletionMessage{
